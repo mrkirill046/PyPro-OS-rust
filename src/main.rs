@@ -1,25 +1,27 @@
 #![no_std]
 #![no_main]
 
+use test_os::*;
 use core::panic::PanicInfo;
 
-static HELLO: &[u8] = b"Hello World!";
+const AUTHOR: &str = "kazuha046 - (discord)";
+const OS_NAME: &str = "PyPro OS";
 
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(info: &PanicInfo) -> ! {
+    println!("\n{}", info);
     loop {}
 }
 
 #[no_mangle]
-pub extern "C" fn _start() -> ! {
-    let vga_buffer = 0xb8000 as *mut u8;
+pub extern "C" fn _start() {
+    println!("Hello, World!");
+    println!("This is {} 64-bit {}", AUTHOR, OS_NAME);
 
-    for (i, &byte) in HELLO.iter().enumerate() {
-        unsafe {
-            *vga_buffer.offset(i as isize * 2) = byte;
-            *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
-        }
-    }
+    print!("\nThis operating system (OS) ");
+    print!("written in Rust");
+
+    println!("\n\nWelcome!");
 
     loop {}
 }
