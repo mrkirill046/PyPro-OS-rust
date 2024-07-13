@@ -1,5 +1,7 @@
 #![no_std]
 #![no_main]
+#![feature(custom_test_frameworks)]
+#![test_runner(test_os::test_runner)]
 
 use test_os::*;
 use core::panic::PanicInfo;
@@ -7,10 +9,17 @@ use core::panic::PanicInfo;
 const AUTHOR: &str = "kazuha046 - (discord)";
 const OS_NAME: &str = "PyPro OS";
 
+#[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    println!("\n{}", info);
+    println!("{}", info);
     loop {}
+}
+
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    test_os::test_panic_handler(info)
 }
 
 #[no_mangle]
