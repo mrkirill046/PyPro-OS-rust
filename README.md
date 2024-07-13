@@ -34,7 +34,19 @@
 
 ### Create ISO file with using Linux
 
-- ```sudo apt-get install xorriso```
-- ```xorriso -as mkisofs -R -b bootimage-test-os.bin -no-emul-boot -boot-load-size 4 -boot-info-table -o bootimage.iso target/x86_64-os/release/bootimage-test-os.bin```
+- ```sudo apt-get install xorriso grub-pc-bin ```
+- ```mkdir -p iso/boot/grub```
+- Create iso/boot/grub/grub.cfg
 
+```
+set timeout=0
+set default=0
 
+menuentry "PyPro OS" {
+    multiboot2 ../bootimage-test-os.bin
+    boot
+}
+```
+
+- ```cp target/x86_64-os/release/bootimage-test-os.bin iso/boot/```
+- ```grub-mkrescue -o iso/PyPro-OS.iso iso```
