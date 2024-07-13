@@ -23,7 +23,7 @@
 - Install QEMU!!!
 - ```qemu-system-x86_64 -drive format=raw,file=target/x86_64-os/debug/bootimage-test-os.bin```
 
-## on Real Machine
+## on Real Machine (not working)
 
 ### Write the operating system image to USB with using Linux
 
