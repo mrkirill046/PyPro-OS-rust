@@ -43,7 +43,7 @@ set timeout=0
 set default=0
 
 menuentry "PyPro OS" {
-    multiboot2 ../bootimage-test-os.bin
+    multiboot2 /boot/bootimage-test-os.bin
     boot
 }
 ```
