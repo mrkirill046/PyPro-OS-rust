@@ -17,7 +17,10 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: sudo apt-get install xorriso grub-pc-bin && rustup target add x86_64-unknown-none
+      run: sudo apt-get install xorriso grub-pc-bin && cargo install bootimage
+
+    - name: Set dependencies
+      run: rustup target add x86_64-unknown-none && rustup update && rustup override set nightly && rustup component add llvm-tools-preview
 
     - name: Build Kernel
       run: cargo build --release && cargo bootimage --release
