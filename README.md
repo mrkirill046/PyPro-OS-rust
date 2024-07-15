@@ -34,7 +34,7 @@
 
 ### Create ISO file with using Linux
 
-- ```sudo apt-get install xorriso grub-pc-bin ```
+- ```sudo apt-get install xorriso grub-pc-bin mtools```
 - ```mkdir -p iso/boot/grub```
 - Create iso/boot/grub/grub.cfg
 
