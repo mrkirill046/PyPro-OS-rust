@@ -1,8 +1,12 @@
 name: Create ISO release
 
+permissions:
+  contents: write
+
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - v[0-9]+.*
 
 jobs:
   build:
@@ -14,6 +18,9 @@ jobs:
 
     - name: Install dependencies
       run: sudo apt-get install xorriso grub-pc-bin
+
+    - name: Build Kernel
+      run: cargo build --release && cargo bootimage --release
 
     - name: Create grub.cfg
       run: |
