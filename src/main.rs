@@ -26,10 +26,10 @@ pub extern "C" fn _start() {
     print!("\nThis operating system (OS) ");
     print!("written in Rust");
 
-    println!("\n\nWelcome!");
+    println!("\n\nWelcome!\n");
 
     #[cfg(test)]
     test_main();
 
-    loop {}
+    pypro_os::hlt_loop();
 }
