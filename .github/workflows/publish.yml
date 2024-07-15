@@ -45,9 +45,12 @@ jobs:
     - name: Create ISO image
       run: grub-mkrescue -o iso/PyPro-OS.iso iso
 
-    - name: Upload ISO to GitHub release
+    - name: Compress ISO image to ZIP
+      run: zip -9 -j iso/PyPro-OS.zip iso/PyPro-OS.iso
+
+    - name: Upload ZIP to GitHub release
       uses: softprops/action-gh-release@v1
       with:
-        files: iso/PyPro-OS.iso
+        files: iso/PyPro-OS.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
