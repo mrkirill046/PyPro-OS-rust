@@ -1,29 +1,25 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(test_os::test_runner)]
+#![test_runner(pypro_os::test_runner)]
+#![reexport_test_harness_main = "test_main"]
 
-use test_os::*;
 use core::panic::PanicInfo;
+use pypro_os::*;
 
 const AUTHOR: &str = "kazuha046 - (discord)";
 const OS_NAME: &str = "PyPro OS";
 
-#[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
     loop {}
 }
 
-#[cfg(test)]
-#[panic_handler]
-fn panic(info: &PanicInfo) -> ! {
-    test_os::test_panic_handler(info)
-}
-
 #[no_mangle]
 pub extern "C" fn _start() {
+    pypro_os::init();
+
     println!("Hello, World!");
     println!("This is {} 64-bit {}", AUTHOR, OS_NAME);
 
@@ -31,6 +27,9 @@ pub extern "C" fn _start() {
     print!("written in Rust");
 
     println!("\n\nWelcome!");
+
+    #[cfg(test)]
+    test_main();
 
     loop {}
 }

@@ -1,0 +1,40 @@
+name: Create ISO release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install xorriso grub-pc-bin
+
+    - name: Create grub.cfg
+      run: |
+        mkdir -p iso/boot/grub
+        echo 'set timeout=0' > iso/boot/grub/grub.cfg
+        echo 'set default=0' >> iso/boot/grub/grub.cfg
+        echo '' >> iso/boot/grub/grub.cfg
+        echo 'menuentry "PyPro OS" {' >> iso/boot/grub/grub.cfg
+        echo '    multiboot2 /boot/bootimage-test-os.bin' >> iso/boot/grub/grub.cfg
+        echo '    boot' >> iso/boot/grub/grub.cfg
+        echo '}' >> iso/boot/grub/grub.cfg
+
+    - name: Copy bootimage to ISO directory
+      run: cp target/x86_64-os/release/bootimage-test-os.bin iso/boot/
+
+    - name: Create ISO image
+      run: grub-mkrescue -o iso/PyPro-OS.iso iso
+
+    - name: Upload ISO to GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: iso/PyPro-OS.iso
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
