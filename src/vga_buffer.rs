@@ -1,6 +1,14 @@
+use core::fmt;
+use lazy_static::lazy_static;
+use spin::Mutex;
+use volatile::Volatile;
+
+pub const BUFFER_HEIGHT: usize = 25;
+pub const BUFFER_WIDTH: usize = 80;
+
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*), $crate::vga_buffer::Color::White));
 }
 
 #[macro_export]
@@ -9,23 +17,37 @@ macro_rules! println {
     ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
 }
 
+#[macro_export]
+macro_rules! print_err {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!("{}\n", format_args!($($arg)*)), $crate::vga_buffer::Color::Red));
+}
+
+#[macro_export]
+macro_rules! print_warn {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!("{}\n", format_args!($($arg)*)), $crate::vga_buffer::Color::Yellow));
+}
+
+#[macro_export]
+macro_rules! print_info {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!("{}\n", format_args!($($arg)*)), $crate::vga_buffer::Color::LightBlue));
+}
+
 #[doc(hidden)]
-pub fn _print(args: fmt::Arguments) {
+pub fn _print(args: core::fmt::Arguments, color: Color) {
     use core::fmt::Write;
     use x86_64::instructions::interrupts;
 
     interrupts::without_interrupts(|| {
-        WRITER.lock().write_fmt(args).unwrap();
+        let mut writer = WRITER.lock();
+
+        writer.color_code = ColorCode::new(color, Color::Black);
+        writer.write_fmt(args).unwrap();
+        writer.color_code = ColorCode::new(Color::White, Color::Black);
     });
 }
-
-pub const BUFFER_HEIGHT: usize = 25;
-pub const BUFFER_WIDTH: usize = 80;
-
-use core::fmt;
-use lazy_static::lazy_static;
-use spin::Mutex;
-use volatile::Volatile;
 
 lazy_static! {
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
@@ -173,7 +195,7 @@ mod tests {
         interrupts::without_interrupts(|| {
             let mut writer = WRITER.lock();
             writeln!(writer, "\n{}", s).expect("writeln failed");
-            
+
             for (i, c) in s.chars().enumerate() {
                 let screen_char = writer.buffer.chars[BUFFER_HEIGHT - 2][i].read();
                 assert_eq!(char::from(screen_char.ascii_character), c);

@@ -6,18 +6,18 @@ version = "0.1.0"
 
 [dependencies.lazy_static]
 features = ["spin_no_std"]
-version = "1.0"
+version = "1.5"
 
 [profile.release]
 panic = "abort"
 
 [[test]]
-name = "should_panic"
 harness = false
+name = "should_panic"
 
 [[test]]
-name = "stack_overflow"
 harness = false
+name = "stack_overflow"
 
 [package.metadata.bootimage]
 test-args = [
@@ -32,9 +32,10 @@ test-success-exit-code = 33
 test-timeout = 30
 
 [dependencies]
-bootloader = "0.9"
-spin = "0.5.2"
-uart_16550 = "0.2.0"
-volatile = "0.2.6"
-x86_64 = "0.14.2"
-pic8259 = "0.10.1"
+bootloader = {version = "0.9.29", features = ["map_physical_memory"]}
+pc-keyboard = "0.7.0"
+pic8259 = "0.11.0"
+spin = "0.9.8"
+uart_16550 = "0.3.1"
+volatile = "0.3.0"
+x86_64 = "0.14.12"
