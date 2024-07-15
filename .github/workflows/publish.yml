@@ -22,6 +22,9 @@ jobs:
     - name: Set dependencies
       run: rustup target add x86_64-unknown-none && rustup update && rustup override set nightly && rustup component add llvm-tools-preview
 
+    - name: Additional settings
+      run: rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
+
     - name: Build Kernel
       run: cargo build --release && cargo bootimage --release
 
