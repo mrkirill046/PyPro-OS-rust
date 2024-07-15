@@ -35,12 +35,12 @@ jobs:
         echo 'set default=0' >> iso/boot/grub/grub.cfg
         echo '' >> iso/boot/grub/grub.cfg
         echo 'menuentry "PyPro OS" {' >> iso/boot/grub/grub.cfg
-        echo '    multiboot2 /boot/bootimage-test-os.bin' >> iso/boot/grub/grub.cfg
+        echo '    multiboot2 /boot/bootimage-pypro_os.bin' >> iso/boot/grub/grub.cfg
         echo '    boot' >> iso/boot/grub/grub.cfg
         echo '}' >> iso/boot/grub/grub.cfg
 
     - name: Copy bootimage to ISO directory
-      run: cp target/x86_64-os/release/bootimage-test-os.bin iso/boot/
+      run: cp target/x86_64-os/release/bootimage-pypro_os.bin iso/boot/
 
     - name: Create ISO image
       run: grub-mkrescue -o iso/PyPro-OS.iso iso

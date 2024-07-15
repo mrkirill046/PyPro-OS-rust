@@ -43,10 +43,10 @@ set timeout=0
 set default=0
 
 menuentry "PyPro OS" {
-    multiboot2 /boot/bootimage-test-os.bin
+    multiboot2 /boot/bootimage-pypro_os.bin
     boot
 }
 ```
 
-- ```cp target/x86_64-os/release/bootimage-test-os.bin iso/boot/```
+- ```cp target/x86_64-os/release/bootimage-pypro_os.bin iso/boot/```
 - ```grub-mkrescue -o iso/PyPro-OS.iso iso```
