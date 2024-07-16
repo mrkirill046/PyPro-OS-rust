@@ -36,17 +36,17 @@
 
 - ```sudo apt-get install xorriso grub-pc-bin mtools```
 - ```mkdir -p iso/boot/grub```
-- Create iso/boot/grub/grub.cfg
+- grub-mkrescue -o iso/PyPro-OS.iso isoCreate iso/boot/grub/grub.cfg
 
 ```
 set timeout=0
 set default=0
 
 menuentry "PyPro OS" {
-    multiboot2 /boot/bootimage-pypro_os.bin
+    multiboot2 /boot/kernel.bin
     boot
 }
 ```
-
 - ```cp target/x86_64-os/release/bootimage-pypro_os.bin iso/boot/```
+- Rename `iso/boot/bootimage-pypro_os.bin` to `iso/boot/kernel.bin`
 - ```grub-mkrescue -o iso/PyPro-OS.iso iso```

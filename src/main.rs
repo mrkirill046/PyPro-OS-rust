@@ -5,11 +5,15 @@
 #![reexport_test_harness_main = "test_main"]
 
 use bootloader::{entry_point, BootInfo};
-use memory::BootInfoFrameAllocator;
 use core::panic::PanicInfo;
+use memory::BootInfoFrameAllocator;
+use pypro_os::task::executor::Executor;
+use pypro_os::task::keyboard;
 use pypro_os::*;
-use x86_64::structures::paging::Page;
+use task::Task;
 use x86_64::VirtAddr;
+
+extern crate alloc;
 
 entry_point!(kernel_main);
 
@@ -21,25 +25,23 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     println!("Hello, World!");
     println!("This is {} 64-bit {}", AUTHOR, OS_NAME);
-
-    print!("\nThis operating system (OS) ");
-    print!("written on Rust");
-
-    println!("\n\nWelcome!");
+    print_info!("\nThis operating system (OS) written on Rust");
+    println!("\nWelcome!");
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
-    let page = Page::containing_address(VirtAddr::new(0xdeadbeaf000));
     let mut mapper = unsafe { memory::init(phys_mem_offset) };
     let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
 
-    memory::create_example_mapping(page, &mut mapper, &mut frame_allocator);
-
-    print!("\nType something: ");
+    allocator::init_heap(&mut mapper, &mut frame_allocator).expect("Heap initialization failed");
 
     #[cfg(test)]
     test_main();
 
-    pypro_os::hlt_loop();
+    print!("\nType something: ");
+
+    let mut executor = Executor::new();
+    executor.spawn(Task::new(keyboard::print_key_presses()));
+    executor.run();
 }
 
 #[panic_handler]
